@@ -71,48 +71,42 @@ public class PuzzlePegs
 			arr[r][c]='p';
 			arr[r-1][c]='p';
 			arr[r-2][c]='h';
-			peg_count++;
 		}
 		else if (d=="south")
 		{
 			arr[r][c]='p';
 			arr[r+1][c]='p';
 			arr[r+2][c]='h';
-			peg_count++;
 		}
 		else if (d=="east")
 		{
 			arr[r][c]='p';
 			arr[r][c+1]='p';
 			arr[r][c+2]='h';
-			peg_count++;
 		}
 		else if (d=="west")
 		{
 			arr[r][c]='p';
 			arr[r][c-1]='p';
 			arr[r][c-2]='h';
-			peg_count++;
 		}
 		else if (d=="northwest")
 		{
 			arr[r][c]='p';
 			arr[r-1][c-1]='p';
 			arr[r-2][c-2]='h';
-			peg_count++;
 		}
 		else if (d=="southeast")
 		{
 			arr[r][c]='p';
 			arr[r+1][c+1]='p';
 			arr[r+2][c+2]='h';
-			peg_count++;
 		}
 		move(arr, peg_count, r, c, r_stack, c_stack, d_stack);
 		return;
 	}
 
-	public static void move(char[][] arr, int peg_count, int r, int c, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
+	public static int move(char[][] arr, int peg_count, int r, int c, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
 	{
 		if (north(arr, r, c))
 		{
@@ -122,8 +116,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r-1][c]='h';
 			arr[r-2][c]='p';
-			peg_count--;
-			return;
+			return peg_count--;
 		}
 		if (south(arr, r, c))
 		{
@@ -133,8 +126,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r+1][c]='h';
 			arr[r+2][c]='p';
-			peg_count--;
-			return;
+			return peg_count--;
 		}
 		if (east(arr, r, c))
 		{
@@ -144,8 +136,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r][c+1]='h';
 			arr[r][c+2]='p';
-			peg_count--;
-			return;
+			return peg_count--;
 		}
 		if (west(arr, r, c))
 		{
@@ -155,8 +146,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r][c-1]='h';
 			arr[r][c-2]='p';
-			peg_count--;
-			return;
+			return peg_count--;
 		}
 		if (northwest(arr, r, c))
 		{
@@ -166,8 +156,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r-1][c-1]='h';
 			arr[r-2][c-2]='p';
-			peg_count--;
-			return;
+			return peg_count--;
 		}
 		if (southeast(arr, r, c))
 		{
@@ -177,13 +166,12 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r+1][c+1]='h';
 			arr[r+2][c+2]='p';
-			peg_count--;
-			return;
+			return peg_count--;
 		}
 		if ((r==5)&&(c==5))//check if move exhausted
 		{
 			undo(arr, peg_count, r_stack, c_stack, d_stack);
-			return;
+			return peg_count++;
 		}
 		if (r==c)
 		{
@@ -192,14 +180,12 @@ public class PuzzlePegs
 		}
 		else
 			r++;
-		move(arr, peg_count, r, c, r_stack, c_stack, d_stack);
-
-
+		return move(arr, peg_count, r, c, r_stack, c_stack, d_stack);
 	}
 
 	public static void play(char[][] board, int peg_count, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
 	{
-		move(board, peg_count, 0, 0, r_stack, c_stack, d_stack);
+		peg_count=move(board, peg_count, 0, 0, r_stack, c_stack, d_stack);
 		if (peg_count==1)
 			return;
 		play(board, peg_count, r_stack, c_stack, d_stack);
