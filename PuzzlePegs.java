@@ -4,6 +4,7 @@
  * PA04 
  */
 import java.util.*;
+
 public class PuzzlePegs
 {
 
@@ -16,24 +17,180 @@ public class PuzzlePegs
 			System.out.println(" ");
 		}
 	}
-
-	public static void num_to_position(int num, int r, int c)
+	
+	public static boolean north(char[][] arr, int r, int c)
 	{
-		int temp=1;//start at position 1
-		r=0;
-		c=0;
-		while(num>temp)
+		if (r<2)
+			return false;
+		return ((arr[r][c]=='p')&&(arr[r-1][c]=='p')&&(arr[r-2][c]=='h'));
+	}
+	
+	public static boolean south(char[][] arr, int r, int c)
+	{
+		if (r>2)
+			return false;
+		return ((arr[r][c]=='p')&&(arr[r+1][c]=='p')&&(arr[r+2][c]=='h'));		
+	}
+
+	public static boolean east(char[][] arr, int r, int c)
+	{
+		if (c>2)
+			return false;
+		return ((arr[r][c]=='p')&&(arr[r][c+1]=='p')&&(arr[r][c+2]=='h'));
+
+	}
+	
+	public static boolean west(char[][] arr, int r, int c)
+	{
+		if (c<2)
+			return false;
+		return ((arr[r][c]=='p')&&(arr[r][c-1]=='p')&&(arr[r][c-2]=='h'));
+	}
+
+	public static boolean northwest(char[][] arr, int r, int c)
+	{
+		if ((r<2)||(c<2))
+			return false;
+		return ((arr[r][c]=='p')&&(arr[r-1][c-1]=='p')&&(arr[r-2][c-2]=='h'));
+	}
+
+	public static boolean southeast(char[][] arr, int r, int c)
+	{
+		if ((r>2)||(c>2))
+			return false;
+		return ((arr[r][c]=='p')&&(arr[r+1][c+1]=='p')&&(arr[r+2][c+2]=='h'));
+	}
+
+	public static void undo(char[][] arr, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
+	{
+		int r=r_stack.pop();
+		int c=c_stack.pop();
+		String d=d_stack.pop();
+		if (d=="north")
 		{
-			temp++;
-			if (r==c)
-			{
-				r++;
-				c=0;
-			}
-			else
-				c++;
+			arr[r][c]='p';
+			arr[r-1][c]='p';
+			arr[r-2][c]='h';
 		}
+		else if (d=="south")
+		{
+			arr[r][c]='p';
+			arr[r+1][c]='p';
+			arr[r+2][c]='h';
+		}
+		else if (d=="east")
+		{
+			arr[r][c]='p';
+			arr[r][c+1]='p';
+			arr[r][c+2]='h';
+		}
+		else if (d=="west")
+		{
+			arr[r][c]='p';
+			arr[r][c-1]='p';
+			arr[r][c-2]='h';
+		}
+		else if (d=="northwest")
+		{
+			arr[r][c]='p';
+			arr[r-1][c-1]='p';
+			arr[r-2][c-2]='h';
+		}
+		else if (d=="southeast")
+		{
+			arr[r][c]='p';
+			arr[r+1][c+1]='p';
+			arr[r+2][c+2]='h';
+		}
+		move(arr, r, c, r_stack, c_stack, d_stack);
 		return;
+	}
+
+	public static void move(char[][] arr, int r, int c, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
+	{
+		if (north(arr, r, c))
+		{
+			r_stack.push(r);
+			c_stack.push(c);
+			d_stack.push("north");
+			arr[r][c]='h';
+			arr[r-1][c]='h';
+			arr[r-2][c]='p';
+			return;
+		}
+		if (south(arr, r, c))
+		{
+			r_stack.push(r);
+			c_stack.push(c);
+			d_stack.push("south");
+			arr[r][c]='h';
+			arr[r+1][c]='h';
+			arr[r+2][c]='p';
+			return;
+		}
+		if (east(arr, r, c))
+		{
+			r_stack.push(r);
+			c_stack.push(c);
+			d_stack.push("east");
+			arr[r][c]='h';
+			arr[r][c+1]='h';
+			arr[r][c+2]='p';
+			return;
+		}
+		if (west(arr, r, c))
+		{
+			r_stack.push(r);
+			c_stack.push(c);
+			d_stack.push("west");
+			arr[r][c]='h';
+			arr[r][c-1]='h';
+			arr[r][c-2]='p';
+			return;
+		}
+		if (northwest(arr, r, c))
+		{
+			r_stack.push(r);
+			c_stack.push(c);
+			d_stack.push("northwest");
+			arr[r][c]='h';
+			arr[r-1][c-1]='h';
+			arr[r-2][c-2]='p';
+			return;
+		}
+		if (southeast(arr, r, c))
+		{
+			r_stack.push(r);
+			c_stack.push(c);
+			d_stack.push("southeast");
+			arr[r][c]='h';
+			arr[r+1][c+1]='h';
+			arr[r+2][c+2]='p';
+			return;
+		}
+		if ((r==5)&&(c==5))//check if move exhausted
+		{
+			undo(arr, r_stack, c_stack, d_stack);
+			return;
+		}
+		if (r==c)
+		{
+			r=0;
+			c++;
+		}
+		else
+			r++;
+		move(arr, r, c, r_stack, c_stack, d_stack);
+
+
+	}
+
+	public static void play(char[][] board)
+	{
+		Stack<Integer> r_stack = new Stack<>();
+		Stack<Integer> c_stack = new Stack<>();
+		Stack<String> d_stack = new Stack<>();
+		move(board, 0, 0, r_stack, c_stack, d_stack);
 	}
 
 public static void main(String[] args)
@@ -71,8 +228,22 @@ public static void main(String[] args)
 		else
 			last_peg=16;
 	}
-	num_to_position(first_hole, r, c);
+	int temp=1;
+	r=0;
+	c=0;
+	while (first_hole>temp)
+	{
+		temp++;
+		if(r==c)
+		{
+			r++;
+			c=0;
+		}
+		else
+			c++;
+	}
 	pegBoard[r][c]='h';
+	play(pegBoard);
 	printArray(pegBoard,rows, columns);
 }
 }
