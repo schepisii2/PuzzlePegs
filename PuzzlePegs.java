@@ -116,7 +116,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r-1][c]='h';
 			arr[r-2][c]='p';
-			return peg_count--;
+			return --peg_count;
 		}
 		if (south(arr, r, c))
 		{
@@ -126,7 +126,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r+1][c]='h';
 			arr[r+2][c]='p';
-			return peg_count--;
+			return --peg_count;
 		}
 		if (east(arr, r, c))
 		{
@@ -136,7 +136,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r][c+1]='h';
 			arr[r][c+2]='p';
-			return peg_count--;
+			return --peg_count;
 		}
 		if (west(arr, r, c))
 		{
@@ -146,7 +146,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r][c-1]='h';
 			arr[r][c-2]='p';
-			return peg_count--;
+			return --peg_count;
 		}
 		if (northwest(arr, r, c))
 		{
@@ -156,7 +156,7 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r-1][c-1]='h';
 			arr[r-2][c-2]='p';
-			return peg_count--;
+			return --peg_count;
 		}
 		if (southeast(arr, r, c))
 		{
@@ -166,20 +166,20 @@ public class PuzzlePegs
 			arr[r][c]='h';
 			arr[r+1][c+1]='h';
 			arr[r+2][c+2]='p';
-			return peg_count--;
+			return --peg_count;
 		}
 		if ((r==5)&&(c==5))//check if move exhausted
 		{
 			undo(arr, peg_count, r_stack, c_stack, d_stack);
-			return peg_count++;
+			return ++peg_count;
 		}
 		if (r==c)
 		{
-			r=0;
-			c++;
+			c=0;
+			r++;
 		}
 		else
-			r++;
+			c++;
 		return move(arr, peg_count, r, c, r_stack, c_stack, d_stack);
 	}
 
