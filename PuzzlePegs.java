@@ -18,44 +18,74 @@ public class PuzzlePegs
 		}
 	}
 	
-	public static boolean north(char[][] arr, int r, int c)
+	public static boolean north(char[][] arr, int r, int c, String d)
 	{
+		if (d=="north")
+		{
+			d="any";
+			return false;
+		}
 		if (r<2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r-1][c]=='p')&&(arr[r-2][c]=='h'));
 	}
 	
-	public static boolean south(char[][] arr, int r, int c)
+	public static boolean south(char[][] arr, int r, int c, String d)
 	{
+		if (d=="south")
+		{
+			d="any";
+			return false;
+		}
 		if (r>2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r+1][c]=='p')&&(arr[r+2][c]=='h'));		
 	}
 
-	public static boolean east(char[][] arr, int r, int c)
+	public static boolean east(char[][] arr, int r, int c, String d)
 	{
+		if (d=="east")
+		{
+			d="any";
+			return false;
+		}
 		if (c>2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r][c+1]=='p')&&(arr[r][c+2]=='h'));
 
 	}
 	
-	public static boolean west(char[][] arr, int r, int c)
+	public static boolean west(char[][] arr, int r, int c, String d)
 	{
+		if (d=="west")
+		{
+			d="any";
+			return false;
+		}
 		if (c<2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r][c-1]=='p')&&(arr[r][c-2]=='h'));
 	}
 
-	public static boolean northwest(char[][] arr, int r, int c)
+	public static boolean northwest(char[][] arr, int r, int c, String d)
 	{
+		if (d=="northwest")
+		{
+			d="any";
+			return false;
+		}
 		if ((r<2)||(c<2))
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r-1][c-1]=='p')&&(arr[r-2][c-2]=='h'));
 	}
 
-	public static boolean southeast(char[][] arr, int r, int c)
+	public static boolean southeast(char[][] arr, int r, int c, String d)
 	{
+		if (d=="southeast")
+		{
+			d="any";
+			return false;
+		}
 		if ((r>2)||(c>2))
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r+1][c+1]=='p')&&(arr[r+2][c+2]=='h'));
@@ -102,13 +132,13 @@ public class PuzzlePegs
 			arr[r+1][c+1]='p';
 			arr[r+2][c+2]='h';
 		}
-		move(arr, peg_count, r, c, r_stack, c_stack, d_stack);
+		move(arr, peg_count++, r, c, d, r_stack, c_stack, d_stack);
 		return;
 	}
 
-	public static int move(char[][] arr, int peg_count, int r, int c, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
+	public static int move(char[][] arr, int peg_count, int r, int c, String d, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
 	{
-		if (north(arr, r, c))
+		if (north(arr, r, c, d))
 		{
 			r_stack.push(r);
 			c_stack.push(c);
@@ -118,7 +148,7 @@ public class PuzzlePegs
 			arr[r-2][c]='p';
 			return --peg_count;
 		}
-		if (south(arr, r, c))
+		if (south(arr, r, c, d))
 		{
 			r_stack.push(r);
 			c_stack.push(c);
@@ -128,7 +158,7 @@ public class PuzzlePegs
 			arr[r+2][c]='p';
 			return --peg_count;
 		}
-		if (east(arr, r, c))
+		if (east(arr, r, c, d))
 		{
 			r_stack.push(r);
 			c_stack.push(c);
@@ -138,7 +168,7 @@ public class PuzzlePegs
 			arr[r][c+2]='p';
 			return --peg_count;
 		}
-		if (west(arr, r, c))
+		if (west(arr, r, c, d))
 		{
 			r_stack.push(r);
 			c_stack.push(c);
@@ -148,7 +178,7 @@ public class PuzzlePegs
 			arr[r][c-2]='p';
 			return --peg_count;
 		}
-		if (northwest(arr, r, c))
+		if (northwest(arr, r, c, d))
 		{
 			r_stack.push(r);
 			c_stack.push(c);
@@ -158,7 +188,7 @@ public class PuzzlePegs
 			arr[r-2][c-2]='p';
 			return --peg_count;
 		}
-		if (southeast(arr, r, c))
+		if (southeast(arr, r, c, d))
 		{
 			r_stack.push(r);
 			c_stack.push(c);
@@ -171,21 +201,20 @@ public class PuzzlePegs
 		if ((r==5)&&(c==5))//check if move exhausted
 		{
 			undo(arr, peg_count, r_stack, c_stack, d_stack);
-			return ++peg_count;
 		}
-		if (r==c)
+		else if (r==c)
 		{
 			c=0;
 			r++;
 		}
 		else
 			c++;
-		return move(arr, peg_count, r, c, r_stack, c_stack, d_stack);
+		return move(arr, peg_count, r, c, d, r_stack, c_stack, d_stack);
 	}
 
 	public static void play(char[][] board, int peg_count, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
 	{
-		peg_count=move(board, peg_count, 0, 0, r_stack, c_stack, d_stack);
+		peg_count=move(board, peg_count, 0, 0, "any", r_stack, c_stack, d_stack);
 		if (peg_count==1)
 			return;
 		play(board, peg_count, r_stack, c_stack, d_stack);
