@@ -194,7 +194,7 @@ public class PuzzlePegs
 	{
 		int old_count=peg_count;
 		peg_count=move(board, peg_count, r, c, d, r_stack, c_stack, d_stack);
-		if (old_count==peg_count)
+		if (old_count==peg_count)//if no move was made, undo last move
 		{
 			r=r_stack.pop();
 			c=c_stack.pop();
@@ -202,13 +202,13 @@ public class PuzzlePegs
 			undo(board, r, c, d);
 			peg_count++;
 		}
-		else
+		else//initial conditions
 		{
 			r=0;
 			c=0;
 			d="any";
 		}
-		if (peg_count==1)
+		if (peg_count==1)//function will eventually check last_pos (didn't make it that far)
 			return;
 		play(board, peg_count, r, c, d, r_stack, c_stack, d_stack);
 	}
@@ -246,7 +246,7 @@ public static void main(String[] args)
 		if (args.length==2)
 			last_peg=Integer.parseInt(args[1]);
 		else
-			last_peg=16;
+			last_peg=16;//dummy value
 	}
 	int temp=1;
 	r=0;
