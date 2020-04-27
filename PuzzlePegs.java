@@ -5,273 +5,135 @@
  */
 import java.util.*;
 
-public class PuzzlePegs
+public class PuzzlePegs implements Cloneable
 {
-
-	public static void printArray(char[][] arr, int r, int c)
+	protected Object clone() throws CloneNotSupportedException
 	{
-		for (int i=0;i<r;i++)
-		{
-			for (int j=0;j<c;j++)
-				System.out.print(arr[i][j]);
-			System.out.println(" ");
-		}
-	}
-	
-	public static boolean north(char[][] arr, int r, int c, String d)
-	{
-		if (d=="north")
-			return false;
-		if (r<2)
-			return false;
-		return ((arr[r][c]=='p')&&(arr[r-1][c]=='p')&&(arr[r-2][c]=='h'));
-	}
-	
-	public static boolean south(char[][] arr, int r, int c, String d)
-	{
-		if (d=="south")
-			return false;
-		if (r>2)
-			return false;
-		return ((arr[r][c]=='p')&&(arr[r+1][c]=='p')&&(arr[r+2][c]=='h'));		
+		return super.clone();
 	}
 
-	public static boolean east(char[][] arr, int r, int c, String d)
+	public static void print(char[] board)
 	{
-		if (d=="east")
-			return false;
-		if (c>2)
-			return false;
-		return ((arr[r][c]=='p')&&(arr[r][c+1]=='p')&&(arr[r][c+2]=='h'));
-
-	}
-	
-	public static boolean west(char[][] arr, int r, int c, String d)
-	{
-		if (d=="west")
-			return false;
-		if (c<2)
-			return false;
-		return ((arr[r][c]=='p')&&(arr[r][c-1]=='p')&&(arr[r][c-2]=='h'));
-	}
-
-	public static boolean northwest(char[][] arr, int r, int c, String d)
-	{
-		if (d=="northwest")
-			return false;
-		if ((r<2)||(c<2))
-			return false;
-		return ((arr[r][c]=='p')&&(arr[r-1][c-1]=='p')&&(arr[r-2][c-2]=='h'));
-	}
-
-	public static boolean southeast(char[][] arr, int r, int c, String d)
-	{
-		if (d=="southeast")
-			return false;
-		if ((r>2)||(c>2))
-			return false;
-		return ((arr[r][c]=='p')&&(arr[r+1][c+1]=='p')&&(arr[r+2][c+2]=='h'));
-	}
-
-	public static void undo(char[][] arr, int r, int c, String d)
-	{
-		if (d=="north")
-		{
-			arr[r][c]='p';
-			arr[r-1][c]='p';
-			arr[r-2][c]='h';
-		}
-		else if (d=="south")
-		{
-			arr[r][c]='p';
-			arr[r+1][c]='p';
-			arr[r+2][c]='h';
-		}
-		else if (d=="east")
-		{
-			arr[r][c]='p';
-			arr[r][c+1]='p';
-			arr[r][c+2]='h';
-		}
-		else if (d=="west")
-		{
-			arr[r][c]='p';
-			arr[r][c-1]='p';
-			arr[r][c-2]='h';
-		}
-		else if (d=="northwest")
-		{
-			arr[r][c]='p';
-			arr[r-1][c-1]='p';
-			arr[r-2][c-2]='h';
-		}
-		else if (d=="southeast")
-		{
-			arr[r][c]='p';
-			arr[r+1][c+1]='p';
-			arr[r+2][c+2]='h';
-		}
+		System.out.println(board[0]);
+		System.out.println(board[1]+""+board[2]);
+		System.out.println(board[3]+""+board[4]+""+board[5]);
+		System.out.println(board[6]+""+board[7]+""+board[8]+""+board[9]);
+		System.out.println(board[10]+""+board[11]+""+board[12]+""+board[13]+""+board[14]);
 		return;
 	}
-
-	public static int move(char[][] arr, int peg_count, int r, int c, String d, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
+	
+	public static void main(String[] args) throws CloneNotSupportedException
 	{
-		if (north(arr, r, c, d))
-		{
-			r_stack.push(r);
-			c_stack.push(c);
-			d_stack.push("north");
-			arr[r][c]='h';
-			arr[r-1][c]='h';
-			arr[r-2][c]='p';
-			return --peg_count;
+		int[][] move={
+		{1,2,4},
+		{1,3,6},
+		{2,4,7},
+		{2,5,9},
+		{3,5,8},
+		{3,6,10},
+		{4,2,1},
+		{4,5,6},
+		{4,7,11},
+		{4,8,13},
+		{5,8,12},
+		{5,9,14},
+		{6,3,1},
+		{6,5,4},
+		{6,9,13},
+		{6,10,15},
+		{7,4,2},
+		{7,8,9},
+		{8,5,3},
+		{8,9,10},
+		{9,5,2},
+		{9,8,7},
+		{10,6,3},
+		{10,9,8},
+		{11,7,4},
+		{11,12,13},
+		{12,8,5},
+		{12,13,14},
+		{13,12,11},
+		{13,8,4},
+		{13,9,6},
+		{13,14,15},
+		{14,13,12},
+		{14,9,5},
+		{15,10,6},
+		{15,14,13}};
+		int first_hole;
+		int last_peg=15;//dummy value
+		char[] board = new char[15];
+		Stack<char[]> boards = new Stack<char[]>();
+		Stack<String> moves = new Stack<String>();
+		if (args.length==0)//stdin for first_hole
+		{			
+			Scanner s1 = new Scanner(System.in);
+			System.out.print("Hole position (1-15): ");
+			first_hole=s1.nextInt();
+			s1.close();
 		}
-		if (south(arr, r, c, d))
+		else//cmd line for first_hole
 		{
-			r_stack.push(r);
-			c_stack.push(c);
-			d_stack.push("south");
-			arr[r][c]='h';
-			arr[r+1][c]='h';
-			arr[r+2][c]='p';
-			return --peg_count;
+			first_hole=Integer.parseInt(args[0]);
+			if (args.length==2)
+				last_peg=Integer.parseInt(args[1])-1;
 		}
-		if (east(arr, r, c, d))
+		//create board
+		for (int i=1; i<=15; i++)
 		{
-			r_stack.push(r);
-			c_stack.push(c);
-			d_stack.push("east");
-			arr[r][c]='h';
-			arr[r][c+1]='h';
-			arr[r][c+2]='p';
-			return --peg_count;
-		}
-		if (west(arr, r, c, d))
-		{
-			r_stack.push(r);
-			c_stack.push(c);
-			d_stack.push("west");
-			arr[r][c]='h';
-			arr[r][c-1]='h';
-			arr[r][c-2]='p';
-			return --peg_count;
-		}
-		if (northwest(arr, r, c, d))
-		{
-			r_stack.push(r);
-			c_stack.push(c);
-			d_stack.push("northwest");
-			arr[r][c]='h';
-			arr[r-1][c-1]='h';
-			arr[r-2][c-2]='p';
-			return --peg_count;
-		}
-		if (southeast(arr, r, c, d))
-		{
-			r_stack.push(r);
-			c_stack.push(c);
-			d_stack.push("southeast");
-			arr[r][c]='h';
-			arr[r+1][c+1]='h';
-			arr[r+2][c+2]='p';
-			return --peg_count;
-		}
-		if ((r==4)&&(c==4))//check if move exhausted
-		{
-			return peg_count;
-		}
-		if (r==c)
-		{
-			c=0;
-			r++;
-		}
-		else
-			c++;
-		return move(arr, peg_count, r, c, d, r_stack, c_stack, d_stack);
-	}
-
-	public static void play(char[][] board, int peg_count, int r, int c, String d, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
-	{
-		int old_count=peg_count;
-		peg_count=move(board, peg_count, r, c, d, r_stack, c_stack, d_stack);
-		if (old_count==peg_count)//if no move was made, undo last move
-		{
-			r=r_stack.pop();
-			c=c_stack.pop();
-			d=d_stack.pop();
-			undo(board, r, c, d);
-			peg_count++;
-		}
-		else//initial conditions
-		{
-			r=0;
-			c=0;
-			d="any";
-		}
-		if (peg_count==1)//function will eventually check last_pos (didn't make it that far)
-			return;
-		play(board, peg_count, r, c, d, r_stack, c_stack, d_stack);
-	}
-
-public static void main(String[] args)
-{
-	//create pegBoard
-	int rows=5;
-	int columns=5;
-	int r=0;
-	int c=0;
-	char pegBoard[][] = new char[rows][columns];
-	for (r=0; r<rows;r++)//all pegs
-	{
-		for (c=0; c<columns;c++)
-		{
-			if (r<c)
-				pegBoard[r][c]=' ';
+			if (i==first_hole)
+				board[i-1]='h';
 			else
-				pegBoard[r][c]='p';
+				board[i-1]='p';
 		}
+		print(board);
+		play(board, move, boards, moves, last_peg);
 	}
-	int first_hole;
-	int last_peg;
-	if (args.length==0)//stdin for first_hole
+
+	public static boolean play(char[] board, int[][] move, Stack<char[]> boards, Stack<String> moves, int last_peg)
+
 	{
-		Scanner s1 = new Scanner(System.in);
-		System.out.print("Hole position (1-15): ");
-		first_hole=s1.nextInt();
-		s1.close();
-	}
-	else//cmd line for first_hole
-	{
-		first_hole=Integer.parseInt(args[0]);
-		if (args.length==2)
-			last_peg=Integer.parseInt(args[1]);
-		else
-			last_peg=16;//dummy value
-	}
-	int temp=1;
-	r=0;
-	c=0;
-	while (first_hole>temp)
-	{
-		temp++;
-		if(r==c)
+		for (int i=0;i<36;i++)//for all moves
 		{
-			r++;
-			c=0;
+			if ((board[move[i][0]]=='p')&&(board[move[i][1]]=='p')&&(board[move[i][2]]=='h'))//if move
+			{
+				//make move
+				board[move[i][0]]='h';
+				board[move[i][1]]='h';
+				board[move[i][2]]='p';
+				//store
+				char[] clone=boards.push(board.clone());
+				//check :)
+				if (play(board, move, boards, moves, last_peg))
+				{
+					moves.push(move[i][0]+"-"+move[i][2]);
+					return true;//:)
+				}//:(
+				//undo
+				if (boards.contains(clone))
+				{
+					boards.remove(clone);
+				}
+				board[move[i][0]]='p';
+				board[move[i][1]]='p';
+				board[move[i][2]]='h';
+			}
 		}
-		else
-			c++;
+				play(board, move, boards, moves, last_peg);
+				int peg_count=15;
+				int peg_pos=15;
+				for (int i=0; i<15; i++)
+				{
+					if (board[i]=='p')
+						peg_count++;
+					else
+						peg_pos=i;
+				}
+				if ((peg_count==1)&&((peg_pos==last_peg)||(last_peg==15)))
+					return true;
+				else
+					return false;
+
 	}
-	pegBoard[r][c]='h';//place hole
-	//initial conditions
-	int peg_count = 14;
-	r=0;
-	c=0;
-	String d="any";
-	Stack<Integer> r_stack = new Stack<>();
-	Stack<Integer> c_stack = new Stack<>();
-	Stack<String> d_stack = new Stack<>();
-	play(pegBoard, peg_count, r, c, d, r_stack, c_stack, d_stack);
-	printArray(pegBoard, rows, columns);
-}
 }
