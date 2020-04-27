@@ -21,10 +21,7 @@ public class PuzzlePegs
 	public static boolean north(char[][] arr, int r, int c, String d)
 	{
 		if (d=="north")
-		{
-			d="any";
 			return false;
-		}
 		if (r<2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r-1][c]=='p')&&(arr[r-2][c]=='h'));
@@ -33,10 +30,7 @@ public class PuzzlePegs
 	public static boolean south(char[][] arr, int r, int c, String d)
 	{
 		if (d=="south")
-		{
-			d="any";
 			return false;
-		}
 		if (r>2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r+1][c]=='p')&&(arr[r+2][c]=='h'));		
@@ -45,10 +39,7 @@ public class PuzzlePegs
 	public static boolean east(char[][] arr, int r, int c, String d)
 	{
 		if (d=="east")
-		{
-			d="any";
 			return false;
-		}
 		if (c>2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r][c+1]=='p')&&(arr[r][c+2]=='h'));
@@ -58,10 +49,7 @@ public class PuzzlePegs
 	public static boolean west(char[][] arr, int r, int c, String d)
 	{
 		if (d=="west")
-		{
-			d="any";
 			return false;
-		}
 		if (c<2)
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r][c-1]=='p')&&(arr[r][c-2]=='h'));
@@ -70,10 +58,7 @@ public class PuzzlePegs
 	public static boolean northwest(char[][] arr, int r, int c, String d)
 	{
 		if (d=="northwest")
-		{
-			d="any";
 			return false;
-		}
 		if ((r<2)||(c<2))
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r-1][c-1]=='p')&&(arr[r-2][c-2]=='h'));
@@ -82,20 +67,14 @@ public class PuzzlePegs
 	public static boolean southeast(char[][] arr, int r, int c, String d)
 	{
 		if (d=="southeast")
-		{
-			d="any";
 			return false;
-		}
 		if ((r>2)||(c>2))
 			return false;
 		return ((arr[r][c]=='p')&&(arr[r+1][c+1]=='p')&&(arr[r+2][c+2]=='h'));
 	}
 
-	public static void undo(char[][] arr, int peg_count, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
+	public static void undo(char[][] arr, int r, int c, String d)
 	{
-		int r=r_stack.pop();
-		int c=c_stack.pop();
-		String d=d_stack.pop();
 		if (d=="north")
 		{
 			arr[r][c]='p';
@@ -132,7 +111,6 @@ public class PuzzlePegs
 			arr[r+1][c+1]='p';
 			arr[r+2][c+2]='h';
 		}
-		move(arr, peg_count++, r, c, d, r_stack, c_stack, d_stack);
 		return;
 	}
 
@@ -198,11 +176,11 @@ public class PuzzlePegs
 			arr[r+2][c+2]='p';
 			return --peg_count;
 		}
-		if ((r==5)&&(c==5))//check if move exhausted
+		if ((r==4)&&(c==4))//check if move exhausted
 		{
-			undo(arr, peg_count, r_stack, c_stack, d_stack);
+			return peg_count;
 		}
-		else if (r==c)
+		if (r==c)
 		{
 			c=0;
 			r++;
@@ -212,12 +190,27 @@ public class PuzzlePegs
 		return move(arr, peg_count, r, c, d, r_stack, c_stack, d_stack);
 	}
 
-	public static void play(char[][] board, int peg_count, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
+	public static void play(char[][] board, int peg_count, int r, int c, String d, Stack<Integer> r_stack, Stack<Integer> c_stack, Stack<String> d_stack)
 	{
-		peg_count=move(board, peg_count, 0, 0, "any", r_stack, c_stack, d_stack);
+		int old_count=peg_count;
+		peg_count=move(board, peg_count, r, c, d, r_stack, c_stack, d_stack);
+		if (old_count==peg_count)
+		{
+			r=r_stack.pop();
+			c=c_stack.pop();
+			d=d_stack.pop();
+			undo(board, r, c, d);
+			peg_count++;
+		}
+		else
+		{
+			r=0;
+			c=0;
+			d="any";
+		}
 		if (peg_count==1)
 			return;
-		play(board, peg_count, r_stack, c_stack, d_stack);
+		play(board, peg_count, r, c, d, r_stack, c_stack, d_stack);
 	}
 
 public static void main(String[] args)
@@ -270,11 +263,15 @@ public static void main(String[] args)
 			c++;
 	}
 	pegBoard[r][c]='h';//place hole
+	//initial conditions
 	int peg_count = 14;
+	r=0;
+	c=0;
+	String d="any";
 	Stack<Integer> r_stack = new Stack<>();
 	Stack<Integer> c_stack = new Stack<>();
 	Stack<String> d_stack = new Stack<>();
-	play(pegBoard, peg_count, r_stack, c_stack, d_stack);
+	play(pegBoard, peg_count, r, c, d, r_stack, c_stack, d_stack);
 	printArray(pegBoard, rows, columns);
 }
 }
