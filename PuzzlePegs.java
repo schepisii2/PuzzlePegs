@@ -14,17 +14,29 @@ public class PuzzlePegs implements Cloneable
 
 	public static void print(char[] board)
 	{
-		System.out.println(board[0]);
-		System.out.println(board[1]+""+board[2]);
-		System.out.println(board[3]+""+board[4]+""+board[5]);
-		System.out.println(board[6]+""+board[7]+""+board[8]+""+board[9]);
-		System.out.println(board[10]+""+board[11]+""+board[12]+""+board[13]+""+board[14]);
+		System.out.println(board[1]);
+		System.out.println(board[2]+""+board[3]);
+		System.out.println(board[4]+""+board[5]+""+board[6]);
+		System.out.println(board[7]+""+board[8]+""+board[9]+""+board[10]);
+		System.out.println(board[11]+""+board[12]+""+board[13]+""+board[14]+""+board[15]);
+		System.out.println(" ");//for readablity
 		return;
+	}
+
+	public static Stack<char[]> flip(Stack<char[]> char_arr)
+	{
+		Stack<char[]> flip_arr = new Stack<char[]>();
+		while (char_arr.empty()==false)
+		{
+			char[] temp = char_arr.pop();
+			flip_arr.push(temp);
+		}
+		return flip_arr;
 	}
 	
 	public static void main(String[] args) throws CloneNotSupportedException
 	{
-		int[][] move={
+		int[][] move={//all possible moves
 		{1,2,4},
 		{1,3,6},
 		{2,4,7},
@@ -62,8 +74,8 @@ public class PuzzlePegs implements Cloneable
 		{15,10,6},
 		{15,14,13}};
 		int first_hole;
-		int last_peg=15;//dummy value
-		char[] board = new char[15];
+		int last_peg=16;//dummy value
+		char[] board = new char[16];
 		Stack<char[]> boards = new Stack<char[]>();
 		Stack<String> moves = new Stack<String>();
 		if (args.length==0)//stdin for first_hole
@@ -77,22 +89,31 @@ public class PuzzlePegs implements Cloneable
 		{
 			first_hole=Integer.parseInt(args[0]);
 			if (args.length==2)
-				last_peg=Integer.parseInt(args[1])-1;
+				last_peg=Integer.parseInt(args[1]);
 		}
 		//create board
 		for (int i=1; i<=15; i++)
 		{
 			if (i==first_hole)
-				board[i-1]='h';
+				board[i]='h';
 			else
-				board[i-1]='p';
+				board[i]='p';
 		}
 		print(board);
-		play(board, move, boards, moves, last_peg);
+		if (play(board, move, boards, moves, last_peg))
+		{
+			boards=flip(boards);
+			while (boards.empty()==false)
+			{
+				System.out.println(moves.pop());
+				print(boards.pop());
+			}
+		}
+		else
+			System.out.println("No solution");
 	}
 
 	public static boolean play(char[] board, int[][] move, Stack<char[]> boards, Stack<String> moves, int last_peg)
-
 	{
 		for (int i=0;i<36;i++)//for all moves
 		{
@@ -103,7 +124,8 @@ public class PuzzlePegs implements Cloneable
 				board[move[i][1]]='h';
 				board[move[i][2]]='p';
 				//store
-				char[] clone=boards.push(board.clone());
+				char[] clone=board.clone();
+				boards.push(clone);
 				//check :)
 				if (play(board, move, boards, moves, last_peg))
 				{
@@ -111,29 +133,28 @@ public class PuzzlePegs implements Cloneable
 					return true;//:)
 				}//:(
 				//undo
-				if (boards.contains(clone))
+				else
 				{
 					boards.remove(clone);
+					board[move[i][0]]='p';
+					board[move[i][1]]='p';
+					board[move[i][2]]='h';
 				}
-				board[move[i][0]]='p';
-				board[move[i][1]]='p';
-				board[move[i][2]]='h';
 			}
 		}
-				play(board, move, boards, moves, last_peg);
-				int peg_count=15;
-				int peg_pos=15;
-				for (int i=0; i<15; i++)
-				{
-					if (board[i]=='p')
-						peg_count++;
-					else
-						peg_pos=i;
-				}
-				if ((peg_count==1)&&((peg_pos==last_peg)||(last_peg==15)))
-					return true;
-				else
-					return false;
+		//check if solution
+		int peg_count=15;
+		int peg_pos=16;//dummy
+		for (int i=1; i<=15; i++)
+		{
+			if (board[i]=='h')
+				peg_count--;
+			else
+				peg_pos=i;
+		}
+		if ((peg_count==1)&&((last_peg==peg_pos)||(last_peg==16)))
+			return true;
+		return false;
 
 	}
 }
